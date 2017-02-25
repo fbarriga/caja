@@ -30,6 +30,7 @@
 #include <X11/Xatom.h>
 #include <gdk/gdkx.h>
 #include <gtk/gtk.h>
+#include <eel/eel-background.h>
 #include <eel/eel-vfs-extensions.h>
 #include <libcaja-private/caja-file-utilities.h>
 #include <libcaja-private/caja-icon-names.h>
@@ -249,6 +250,15 @@ realize (GtkWidget *widget)
                           G_CALLBACK (caja_desktop_window_screen_size_changed), window);
 }
 
+static gboolean
+draw (GtkWidget *widget,
+      cairo_t   *cr)
+{
+    eel_background_draw (widget, cr);
+
+    return GTK_WIDGET_CLASS (caja_desktop_window_parent_class)->draw (widget, cr);
+}
+
 static char *
 real_get_title (CajaWindow *window)
 {
@@ -271,6 +281,7 @@ caja_desktop_window_class_init (CajaDesktopWindowClass *klass)
     wclass->realize = realize;
     wclass->unrealize = unrealize;
     wclass->map = map;
+    wclass->draw = draw;
     nclass->window_type = CAJA_WINDOW_DESKTOP;
     nclass->get_title = real_get_title;
     nclass->get_icon = real_get_icon;
